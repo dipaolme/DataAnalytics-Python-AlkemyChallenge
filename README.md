@@ -8,6 +8,14 @@ sobre bibliotecas, museos y salas de cines argentinos.
 
 ### Deploy
 
-1) Una vez descargado o clonado el ropositorio, crear un ambiente virtual con venv
+1) Una vez descargado o clonado el ropositorio localmente, crear un ambiente virtual con venv (puede ser dentro o fuera, se recomienda adentro por una cuestion de orden)
+
+`python3 -m venv <myenv>`
+  
+
+
+
+
+
 
 
