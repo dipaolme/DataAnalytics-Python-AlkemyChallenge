@@ -23,7 +23,7 @@ sobre bibliotecas, museos y salas de cines argentinos.
   
     Se proporciona el archivo *requirements.txt* donde se listan todos los modulos utilizados, se pueden instalar todos de una vez 
   
-    `pip3 install requirements.txt`
+    `pip3 install -r requirements.txt`
     
   
  3) Se necesita crear una base de datos PostgreSQL, una vez hecho recordar y tener a mano los siguientes parametros para completar el archivo de configuracion *.env*
