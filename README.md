@@ -42,4 +42,6 @@ sobre bibliotecas, museos y salas de cines argentinos.
 ### Ejecucion
   
    `python3 main.py`
+   
+   En el archivo *file.log* podran encontrar los diferentes pasos de ejecucucion.
   
