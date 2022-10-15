@@ -41,5 +41,5 @@ sobre bibliotecas, museos y salas de cines argentinos.
   
 ### Ejecucion
   
-    `python3 main.py`
+   `python3 main.py`
   
