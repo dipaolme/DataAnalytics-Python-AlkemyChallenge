@@ -1,5 +1,5 @@
 # DataAnalytics-Python-AlkemyChallenge
-Alkemy challenge - aceleleracion octubre 2022
+Alkemy challenge - Aceleracion octubre 2022
 
 ## Objetivo
 
