@@ -19,11 +19,11 @@ sobre bibliotecas, museos y salas de cines argentinos.
     `source <myenv>/bin/activate`
     
   
- 2) Instalar todos los modulos necesario, para ello se utilizar la herramienta pip
+ 2) Instalar todos los modulos necesario, para ello se puede utilizar la herramienta pip
   
     `pip3 install <modulo>`
   
-    Se proporciona el archivo *requirements.txt* donde se listan todos los modulos utilizados, se pueden instalar todos de una vez 
+    Se proporciona el archivo *requirements.txt* donde se listan todos los modulos utilizados, se pueden instalar de a uno por vez o  todos juntos con 
   
     `pip3 install -r requirements.txt`
     
@@ -45,5 +45,5 @@ sobre bibliotecas, museos y salas de cines argentinos.
   
    `python3 main.py`
    
-   En el archivo *file.log* podran encontrar los diferentes pasos de ejecucucion.
+   En el archivo *file.log* podran encontrar los diferentes pasos de ejecucion.
   
