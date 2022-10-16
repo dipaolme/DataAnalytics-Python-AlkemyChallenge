@@ -1,7 +1,7 @@
 # DataAnalytics-Python-AlkemyChallenge
 Alkemy challenge - Aceleracion octubre 2022
 
-Matias Di Paola
+Autor: Matias Di Paola
 
 ## Objetivo
 
