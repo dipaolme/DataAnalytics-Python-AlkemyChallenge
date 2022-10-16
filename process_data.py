@@ -11,7 +11,7 @@ dict_columns = {'cod_loc': 'cod_localidad',
                 'cp': 'codigo_postal'}
 
 
-def normalize_l(s):
+def normalize_t(s):
     """Quita las tildes de las palabras"""
     replacements = (
         ("á", "a"),
@@ -25,37 +25,53 @@ def normalize_l(s):
     return s
 
 
-def normalize(df):
+def normalize_column_n(df):
     """Normaliza los nombres de las columnas,para ello se le sacan las tildes a las palabras, 
     se convierten en  minuscula y algunas se reescriben segun un diccionario
     """
 
     # normalize column names
-    df.columns = [normalize_l(c).lower() for c in df.columns]
+    df.columns = [normalize_t(c).lower() for c in df.columns]
     df = df.rename(columns=dict_columns)
 
     return df
 
 
 def create_helper(df1, df2, df3, dt):
-    """Genera un df concatenando los 3 archivos originales que luego se usara en todas las funciones que generan las tablas"""
+    """Normaliza el nombre de las columnas, selecciona columnas de interes,
+    concatenana las tablas en una sola, setea tipos de datos de las columnas, normaliza la columna provincias,
+    pone como nulos valores faltantes"""
+
+    # bibliotecas
+    df1 = normalize_column_n(df1)
+    df1 = df1[['cod_localidad', 'id_provincia', 'id_departamento', 'categoria', 'provincia',
+               'localidad', 'nombre', 'domicilio', 'codigo_postal', 'telefono', 'mail', 'web', 'fuente']]
+
+    # cines
+    df2 = normalize_column_n(df2)
+    df2 = df2[['cod_localidad', 'id_provincia', 'id_departamento', 'categoria', 'provincia',
+               'localidad', 'nombre', 'domicilio', 'codigo_postal', 'telefono', 'mail', 'web', 'fuente', 'pantallas', 'butacas', 'espacio_incaa']]
+
+    # museos
+    df3 = normalize_column_n(df3)
+    df3 = df3[['cod_localidad', 'id_provincia', 'id_departamento', 'categoria', 'provincia',
+               'localidad', 'nombre', 'domicilio', 'codigo_postal', 'telefono', 'mail', 'web', 'fuente']]
 
     df = pd.concat([df1, df2, df3], axis=0, join='outer', ignore_index=True)
 
-    # seteo tipo de datos de las columnas
+    # se setea tipo de datos de las columnas
     df = df.astype({'cod_localidad': int, 'id_provincia': int, 'id_departamento': int, 'categoria': str, 'provincia': str,
                     'localidad': str, 'nombre': str, 'domicilio': str, 'codigo_postal': str, 'telefono': str, 'mail': str, 'web': str, "fuente": str})
 
-    # se normalizan los nombres de las provincias
-    df['provincia'] = df['provincia'].apply(lambda x: normalize_l(x.strip()))
+    # se normaliza los nombres de las provincias
+    df['provincia'] = df['provincia'].apply(lambda x: normalize_t(x.strip()))
     df['provincia'].replace(
         {'Tierra del Fuego, Antartida e Islas del Atlantico Sur': 'Tierra del Fuego'}, inplace=True)
 
-    # se reemplaza 's/d', 'nan'  por valores nulos
-    df['telefono'].replace({'s/d': None, 'nan': None}, inplace=True)
-    df['mail'].replace({'s/d': None, 'nan': None}, inplace=True)
-    df['web'].replace({'s/d': None, 'nan': None}, inplace=True)
-    df['codigo_postal'].replace({'s/d': None, 'nan': None}, inplace=True)
+    # se reemplaza valores sin datos por nulos en las columnas tipo string
+    cols_str = df.select_dtypes(include='object').columns.to_list()
+    df.loc[:, cols_str] = df.loc[:, cols_str].replace(
+        {'s/d': None, 'nan': None})
 
     # se agrega la columna con fecha de carga
     df['fecha_carga'] = dt
@@ -63,43 +79,37 @@ def create_helper(df1, df2, df3, dt):
     return df
 
 
-def create_espacios(df):
+def create_informacion(df):
 
     df = df[['cod_localidad', 'id_provincia', 'id_departamento', 'categoria', 'provincia',
              'localidad', 'nombre', 'domicilio', 'codigo_postal', 'telefono', 'mail', 'web', 'fecha_carga']]
 
-    logging.info('Tabla "ESPACIOS" creada')
+    logging.info('Tabla "INFORMACION" creada')
     return df
 
 
-def create_rxcategoria(df):
+def create_registros(df):
 
-    df = df.groupby('categoria').agg(
-        registros_totales=('nombre', 'count'), fecha_carga=('fecha_carga', 'first')).reset_index()
-    df = df.astype({"registros_totales": int})
+    df1 = df.groupby(['provincia', 'categoria']).agg(
+        total=('nombre', 'count'), fuente=('fuente', 'first')).reset_index()
+    df1 = df1.astype({"total": int})
 
-    logging.info('Tabla "RXCATEGORIA" creada')
-    return df
+    df1 = df1[['provincia', 'categoria', 'fuente', 'total']]
 
+    df2 = df.groupby('categoria').agg(
+        categoria_total=('nombre', 'count')).reset_index()
+    df2 = df2.astype({"categoria_total": int})
 
-def create_rxfuente(df):
+    df3 = df1.merge(df2, how='left', on='categoria')
 
-    df = df.groupby('fuente').agg(
-        registros_totales=('nombre', 'count'), fecha_carga=('fecha_carga', 'first')).reset_index()
-    df = df.astype({"registros_totales": int})
+    df4 = df.groupby('fuente').agg(
+        fuente_total=('nombre', 'count'), fecha_carga=('fecha_carga', 'first')).reset_index()
+    df4 = df4.astype({"fuente_total": int})
 
-    logging.info('Tabla "RXFUENTE" creada')
-    return df
+    df5 = df3.merge(df4, how='left', on='fuente')
 
-
-def create_rxprovincia(df):
-
-    df = df.groupby(['provincia', 'categoria']).agg(
-        registros_totales=('nombre', 'count'), fecha_carga=('fecha_carga', 'first')).reset_index()
-    df = df.astype({"registros_totales": int})
-
-    logging.info('Tabla "RXPROVINCIA" creada')
-    return df
+    logging.info('Tabla "REGISTROS" creada')
+    return df5
 
 
 def create_cine(df):

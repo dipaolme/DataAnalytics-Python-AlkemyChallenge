@@ -1,5 +1,5 @@
 
-CREATE TABLE espacios (
+CREATE TABLE informacion (
     cod_localidad INTEGER,
     id_provincia INTEGER,
     id_departamento INTEGER,
@@ -15,24 +15,16 @@ CREATE TABLE espacios (
     fecha_carga DATE NOT NULL
 );
 
-CREATE TABLE rxcategoria (
-    categoria TEXT,
-    registros_totales INTEGER,
-    fecha_carga DATE NOT NULL
-);
-
-CREATE TABLE rxfuente (
-    fuente TEXT,
-    registros_totales INTEGER,
-    fecha_carga DATE NOT NULL
-);
-
-CREATE TABLE rxprovincia (
+CREATE TABLE registros (
     provincia TEXT,
     categoria TEXT,
-    registros_totales INTEGER,
+    fuente TEXT,
+    total INTEGER,
+    categoria_total INT,
+    fuente_total INT,
     fecha_carga DATE NOT NULL
 );
+
 
 CREATE TABLE cines (
     provincia TEXT,
